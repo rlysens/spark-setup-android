@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="brand_name">Particle</string>
+    <string name="mode_button_name">Mode button</string>
+    <string name="listen_mode_led_color_name">blue</string>
+    <string name="brand_name">¡Hola!</string>
     <string name="app_name">@string/brand_name</string>
-    <string name="device_name">Photon</string>
+    <string name="device_name">Hola</string>
     <drawable name="device_image">@drawable/photon_vector</drawable>
     <drawable name="device_image_small">@drawable/photon_vector_small</drawable>
 
-    <drawable name="brand_image_horizontal">@drawable/particle_horizontal_blue</drawable>
+    <drawable name="brand_image_horizontal">@mipmap/hola_lm</drawable>
     <drawable name="brand_image_vertical">@drawable/particle_vertical_blue</drawable>
     <drawable name="screen_background">@drawable/trianglifybackground</drawable>
-    <color name="brand_image_background_color">#641A1A1A</color>
+    <color name="brand_image_background_color">#2196f3</color>
 
-    <string name="mode_button_name">Mode button</string>
-    <string name="listen_mode_led_color_name">blue</string>
-    <string name="network_name_prefix">@string/device_name</string>
+    <!-- was: @string/device_name -->
+    <string name="network_name_prefix">Photon</string>
+
+    <string name="http_log_level">NONE</string>
 
     <string name="terms_of_service_uri">https://www.particle.io/tos</string>
     <string name="privacy_policy_uri">https://www.particle.io/privacy</string>
@@ -29,23 +32,23 @@
     <string name="forgot_password_html_file">NOT_DEFINED</string>
     <string name="troubleshooting_html_file">NOT_DEFINED</string>
 
-    <bool name="show_sign_up_page_fine_print">true</bool>
+    <bool name="show_sign_up_page_fine_print">false</bool>
 
-    <color name="page_background_color">#F2F2F2</color>
-    <color name="form_field_background_color">@android:color/white</color>
-    <color name="normal_text_color">@android:color/white</color>
-    <color name="link_text_color">@android:color/white</color>
-    <color name="link_text_bg">#19AAAAAA</color>
-    <color name="error_text_color">#FE4747</color>
+    <color name="page_background_color">#484848</color>
+    <color name="form_field_background_color">#ffffff</color>
+    <color name="normal_text_color">#000000</color>
+    <color name="link_text_color">#000000</color>
+    <color name="link_text_bg">#c7c7c7c7</color>
+    <color name="error_text_color">#fafafa</color>
 
-    <color name="register_field_background_color_enabled">@color/form_field_background</color>
-    <color name="register_field_background_color_disabled">#AACCCCCC</color>
+    <color name="register_field_background_color_enabled">#000000</color>
+    <color name="register_field_background_color_disabled">#c7c7c7</color>
 
 
-    <color name="element_background_color">#00BAEC</color>
-    <color name="element_background_color_dark">#0083A6</color>
-    <color name="element_text_color">@android:color/white</color>
-    <color name="element_text_disabled_color">#E0E0E0</color>
+    <color name="element_background_color">#c7c7c7</color>
+    <color name="element_background_color_dark">#484848</color>
+    <color name="element_text_color">#000000</color>
+    <color name="element_text_disabled_color">#484848</color>
 
     <!-- The font names below are the paths to the font you want to use, relative to the assets
         folder.
@@ -66,10 +69,17 @@
     <bool name="organization">false</bool>
     <bool name="productMode">false</bool>
     <!-- {@deprecated Organization settings have been deprecated - set product name and ID only.} -->
-    <string name="organization_slug">CHANGE_ME</string>
+    <string name="organization_slug">3891</string>
     <!-- {@deprecated Set productId number instead.} -->
-    <string name="product_slug">CHANGE_ME</string>
-    <integer name="product_id">0</integer>
+    <string name="product_slug">3891</string>
+    <integer name="product_id">3891</integer>
+
+    <!-- FIXME: unused, remove? -->
+    <!-- filename of the setup video, which should be placed under the src/main/res/raw folder -->
+    <!--<string name="get_ready_video_file_name">nope_nope_nope.mp4</string>-->
+
+    <!-- NOTE: there is no "discover video" path defined here because we're too awesome to need
+        that step on Android: we just take care of it on the user's behalf. -->
 
     <!-- FIXME: apparently these values aren't customizable on the iOS app? -->
     <string name="indicator_light">indicator light</string>

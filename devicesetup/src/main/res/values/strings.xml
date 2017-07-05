@@ -2,18 +2,27 @@
 <resources>
 
     <!-- Phrase-templated strings -->
+    <string name="buddy_not_found">Buddy not found!</string>
+    <string name="msg_loading">Loading...</string>
+    <string name="msg_load_fail">Could not retrieve info.</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="msg_device_onoffline">{device_name} is {onoffline}.</string>
+    <string name="msg_device_buddy_header">Buddies:</string>
+    <string name="unknown">Unknown</string>
+    <string name="msg_no_devices_found">No {device_name} devices found.</string>
     <string name="msg_device_not_listed">{device_name} not listed here? Hold the {setup_button_identifier} for three seconds to put it in setup mode; the {indicator_light} should turn {indicator_light_setup_color_name}</string>
     <string name="get_ready_title_text">Time to set up your {device_name}!</string>
     <string name="get_ready_text"><![CDATA[\n
-\u2022 Please power on your {device_name} by plugging it in.\n\n
-\u2022 The indicator light should blink {indicator_light_setup_color_name}. If this {device_name} has been set up before, hold the {setup_button_identifier} for 3 seconds to set up again.\n\n
+\u2022 Please power on your {device_name}.\n\n
 \u2022 Make sure your Android device is connected to the internet.\n\n
 \u2022 Tap the READY button to proceed.]]></string>
-    <string name="wifi_list_header_text">Choose your {device_name}</string>
+    <string name="wifi_list_header_text">{device_name} devices ready for setup:</string>
+    <string name="online_list_header_text">Your {device_name} devices:</string>
     <string name="connecting_text">Your {device_name} is connecting to</string>
     <string name="your_device_is_connected">Your {device_name} is connected!</string>
     <string name="msg_create_account_disclaimer"><![CDATA[By clicking "SIGN UP" you are indicating that you have read and agreed to the <a href="{tos_link}">Terms of Service</a> and <a href="{privacy_policy_link}">Privacy Policy.</a>]]></string>
-    <string name="create_account_header_text">Create {brand_name} account</string>
+    <string name="create_account_header_text">Create a {brand_name} account</string>
     <string name="log_in_header_text">{brand_name} Login</string>
     <string name="you_are_logged_in_as">You are logged in as: {username}</string>
     <string name="set_up_another_device">Set up another {device_name}</string>
@@ -27,8 +36,11 @@
     <string name="title_activity_get_ready">Get Ready</string>
     <string name="title_activity_intro">Intro</string>
     <string name="title_activity_manual_network_entry">Manual Network Entry</string>
+    <string name="title_activity_not_logged_in">Sign Up or Sign In.</string>
     <string name="title_activity_create_account">Create account</string>
     <string name="title_activity_discover_device">Choose device</string>
+    <string name="title_activity_list_devices">Your devices</string>
+    <string name="title_activity_device_detail">Device Info</string>
     <string name="title_activity_select_network">Choose Wi-Fi network</string>
     <string name="title_activity_password_entry">Enter Wi-Fi password</string>
     <string name="title_activity_connecting">Connecting</string>
@@ -38,8 +50,9 @@
     <string name="msg_no_account">&lt;u&gt;I don\'t have an account&lt;/u&gt;</string>
     <string name="msg_forgot_password">&lt;u&gt;I forgot my password&lt;/u&gt;</string>
     <string name="action_create_account_short">SIGN UP</string>
-    <string name="action_create_account">Sign Up</string>
-    <string name="msg_user_already_has_account">&lt;u&gt;I already have an account&lt;/u&gt;</string>
+    <string name="action_create_account">Create your {brand_name} account.</string>
+    <string name="welcome">Welcome to {brand_name}</string>
+    <string name="msg_user_already_has_account">I already have an account.</string>
     <string name="activation_code">activation code</string>
     <string name="troubleshooting">&lt;u&gt;Troubleshooting&lt;/u&gt;</string>
     <string name="im_ready">Ready</string>
@@ -51,6 +64,13 @@
     <string name="you_did_it">YOU DID IT</string>
     <string name="rescan">Rescan</string>
     <string name="log_out">Log out</string>
+    <string name="add_device">Find new device</string>
+    <string name="prompt_buddy_0">buddy 1 name</string>
+    <string name="buddy_0_prefix">1: </string>
+    <string name="prompt_buddy_1">buddy 2 name</string>
+    <string name="buddy_1_prefix">2: </string>
+    <string name="prompt_buddy_2">buddy 3 name</string>
+    <string name="buddy_2_prefix">3: </string>
     <string name="select_your_wifi_network">Select your Wi-Fi network</string>
     <string name="no_wifi_networks_found">(No Wi-Fi networks found)</string>
     <string name="check_for_internet_connectivity">Checking for internet connectivity</string>
@@ -73,6 +93,9 @@
     <string name="show_password">Show password</string>
     <string name="change_network">Change network</string>
     <string name="done">Done!</string>
+    <string name="submit">Save</string>
+    <string name="buddy_not_set">Not Set</string>
+    <string name="name_unknown">Unknown</string>
     <string name="get_ready_could_not_connect_to_cloud">Could not communicate with Photon cloud.  Make sure your Android device is connected to the internet and retry.</string>
     <string name="error">Error</string>
     <string name="ok">OK</string>
@@ -95,6 +118,8 @@
     <string name="create_account_error_communicating_with_server">Error communicating with server</string>
     <string name="create_account_account_already_exists_for_email_address">An account with this email address may already exist.</string>
     <string name="get_ready_must_be_logged_in_as_customer">Sorry, you must be logged in as a %s customer.</string>
+    <string name="buddy_set_fail">Failed to set buddy name.</string>
+    <string name="buddy_set_success">Successfully set buddy name.</string>
     <string name="location_permission_denied_cannot_start_setup">Location permission denied, cannot start setup</string>
     <string name="enterprise_networks_not_supported">Enterprise Wi-Fi networks not supported for mobile setup.</string>
     <string name="settings">Settings</string>

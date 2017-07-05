@@ -23,6 +23,7 @@ import io.particle.android.sdk.cloud.Responses.ClaimCodeResponse;
 import io.particle.android.sdk.devicesetup.ParticleDeviceSetupLibrary;
 import io.particle.android.sdk.devicesetup.R;
 import io.particle.android.sdk.di.ApModule;
+
 import io.particle.android.sdk.ui.BaseActivity;
 import io.particle.android.sdk.utils.Async;
 import io.particle.android.sdk.utils.Async.AsyncApiWorker;
@@ -68,14 +69,20 @@ public class GetReadyActivity extends BaseActivity implements PermissionsFragmen
         Ui.setText(this, R.id.get_ready_text,
                 Phrase.from(this, R.string.get_ready_text)
                         .put("device_name", getString(R.string.device_name))
-                        .put("indicator_light_setup_color_name", getString(R.string.listen_mode_led_color_name))
-                        .put("setup_button_identifier", getString(R.string.mode_button_name))
                         .format());
 
         Ui.setText(this, R.id.get_ready_text_title,
                 Phrase.from(this, R.string.get_ready_title_text)
                         .put("device_name", getString(R.string.device_name))
                         .format());
+
+        if (sparkCloud.getAccessToken() == null) {
+            startLoginActivity();
+            finish();
+        }
+
+        /*Attempt to connect without waiting for user*/
+        connect();
     }
 
     @Override
@@ -91,14 +98,15 @@ public class GetReadyActivity extends BaseActivity implements PermissionsFragmen
     }
 
     private void onReadyButtonClicked(View v) {
+        connect();
+    }
+
+    private void connect () {
         if (claimCodeWorker != null && !claimCodeWorker.isCancelled()) {
             return;
         }
+        // FIXME: check here that another of these tasks isn't already running
         DeviceSetupState.reset();
-        if (BaseActivity.setupOnly) {
-            moveToDeviceDiscovery();
-            return;
-        }
         showProgress(true);
         final Context ctx = this;
         claimCodeWorker = Async.executeAsync(sparkCloud, new Async.ApiWork<ParticleCloud, ClaimCodeResponse>() {
@@ -182,7 +190,7 @@ public class GetReadyActivity extends BaseActivity implements PermissionsFragmen
             return;
         }
 
-        moveToDeviceDiscovery();
+        moveToOnlineDevices();
     }
 
     private ClaimCodeResponse generateClaimCode(Context ctx) throws ParticleCloudException {
@@ -208,17 +216,19 @@ public class GetReadyActivity extends BaseActivity implements PermissionsFragmen
         ParticleUi.showParticleButtonProgress(this, R.id.action_im_ready, show);
     }
 
-    private void moveToDeviceDiscovery() {
+    private void moveToOnlineDevices() {
         if (PermissionsFragment.hasPermission(this, permission.ACCESS_COARSE_LOCATION)) {
-            startActivity(new Intent(GetReadyActivity.this, DiscoverDeviceActivity.class));
+            startActivity(new Intent(GetReadyActivity.this, OnlineDeviceActivity.class));
         } else {
             PermissionsFragment.get(this).ensurePermission(permission.ACCESS_COARSE_LOCATION);
         }
+        
+        finish();
     }
 
     @Override
     public void onUserAllowedPermission(String permission) {
-        moveToDeviceDiscovery();
+        moveToOnlineDevices();
     }
 
     @Override

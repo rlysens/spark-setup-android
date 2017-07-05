@@ -18,27 +18,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ParticleDeviceSetupLibrary.init(this.getApplicationContext());
 
-        Ui.findView(this, R.id.start_setup_button).setOnClickListener(view -> invokeDeviceSetup());
-        Ui.findView(this, R.id.start_setup_custom_intent_button).setOnClickListener(v -> invokeDeviceSetupWithCustomIntentBuilder());
+        invokeDeviceSetup();
 
-        String setupLaunchTime = this.getIntent().getStringExtra(EXTRA_SETUP_LAUNCHED_TIME);
-
-        if (setupLaunchTime != null) {
-            TextView label = Ui.findView(this, R.id.textView);
-
-            label.setText(String.format(getString(R.string.welcome_back), setupLaunchTime));
-        }
+        finish();
     }
 
     public void invokeDeviceSetup() {
         ParticleDeviceSetupLibrary.startDeviceSetup(this, MainActivity.class);
     }
-
-    private void invokeDeviceSetupWithCustomIntentBuilder() {
-        final String setupLaunchedTime = new Date().toString();
-
-        // Important: don't use an anonymous inner class to implement SetupCompleteIntentBuilder, otherwise you will cause a memory leak.
-        ParticleDeviceSetupLibrary.startDeviceSetup(this, new ExampleSetupCompleteIntentBuilder(setupLaunchedTime));
-    }
-
 }

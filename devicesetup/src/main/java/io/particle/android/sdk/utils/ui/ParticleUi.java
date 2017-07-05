@@ -35,12 +35,17 @@ public class ParticleUi {
 
         @Override
         public void onSoftKeyboardShown() {
-            logoView.setVisibility(View.GONE);
+            if (logoView != null) {
+                logoView.setVisibility(View.GONE);
+            }
         }
 
         @Override
         public void onSoftKeyboardHidden() {
-            logoView.setVisibility(View.VISIBLE);
+
+            if (logoView != null) {
+                logoView.setVisibility(View.VISIBLE);
+            }
         }
 
     }

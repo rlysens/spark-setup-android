@@ -100,15 +100,7 @@ public class SuccessActivity extends BaseActivity {
     @OnClick(R2.id.action_done)
     protected void onDoneClick(View v) {
         deviceNameView.setError(null);
-        if (isSuccess && !BaseActivity.setupOnly) {
-            if (deviceNameView.getVisibility() == View.VISIBLE && deviceNameView.getText().toString().isEmpty()) {
-                deviceNameView.setError(getString(R.string.error_field_required));
-            } else {
-                finishSetup(v.getContext(), deviceNameView.getText().toString(), true);
-            }
-        } else {
-            leaveActivity(v.getContext(), false);
-        }
+        leaveActivity(v.getContext(), true);
     }
 
     @OnClick(R2.id.action_troubleshooting)
@@ -151,7 +143,6 @@ public class SuccessActivity extends BaseActivity {
             }
             SEGAnalytics.track("Device Setup: Failure", analyticProperties);
         } else {
-            showDeviceName(particleCloud);
             SEGAnalytics.track("Device Setup: Success", RESULT_SUCCESS_UNKNOWN_OWNERSHIP == resultCode ?
                     new Properties().putValue("reason", "not claimed") : null);
         }

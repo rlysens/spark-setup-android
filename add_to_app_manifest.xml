@@ -1,4 +1,16 @@
 <activity
+    android:name="io.particle.android.sdk.devicesetup.ui.DeviceDetailActivity"
+    android:label="@string/title_activity_device_detail"
+    android:screenOrientation="portrait"
+    android:theme="@style/ParticleSetupTheme.NoActionBar"
+    android:windowSoftInputMode="stateHidden" />
+<activity
+    android:name="io.particle.android.sdk.devicesetup.ui.OnlineDeviceActivity"
+    android:label="@string/title_activity_online_device"
+    android:screenOrientation="portrait"
+    android:theme="@style/ParticleSetupTheme.NoActionBar"
+    android:windowSoftInputMode="stateHidden" />
+<activity
     android:name="io.particle.android.sdk.devicesetup.ui.DiscoverDeviceActivity"
     android:label="@string/title_activity_discover_device"
     android:screenOrientation="portrait"
