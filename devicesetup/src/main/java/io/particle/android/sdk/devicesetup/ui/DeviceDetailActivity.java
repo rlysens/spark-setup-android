@@ -207,16 +207,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 if (mDeviceData != null) {
                     params.mResult = mDeviceData.setBuddyName(params.mBuddyIdx, params.mBuddyName);
                     if (params.mResult) {
-                        int count=0;
-                        String buddyId;
-
-                        while (count++ < 3) {
-                            mDeviceData.refresh(DeviceDetailActivity.this);
-                            if (!mDeviceData.getBuddyId(params.mBuddyIdx).equals("")) {
-                                break;
-                            }
-                            EZ.threadSleep(2000);
-                        }
+                        mDeviceData.refresh(DeviceDetailActivity.this);
                     }
                 }
                 else {
