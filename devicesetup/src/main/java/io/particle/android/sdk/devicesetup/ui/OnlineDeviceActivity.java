@@ -34,6 +34,10 @@ import io.particle.android.sdk.utils.ui.Ui;
 public class OnlineDeviceActivity extends AppCompatActivity
         implements OnlineDeviceListAdapter.ListItemClickListener, PermissionsFragment.Client {
 
+    interface MoveToActivity {
+        void doIt(OnlineDeviceActivity currentActivity);
+    }
+
     private static final TLog log = TLog.get(OnlineDeviceActivity.class);
     private ParticleCloud sparkCloud;
     private OnlineDeviceListAdapter mAdapter;
@@ -41,6 +45,7 @@ public class OnlineDeviceActivity extends AppCompatActivity
     private TextView mNoDevicesFoundTV;
     private AsyncTask<Void, Void, List<HolaDeviceData>> mListDevicesTask;
     private List<HolaDeviceData> mDeviceList;
+    private MoveToActivity mMoveToActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,18 +82,28 @@ public class OnlineDeviceActivity extends AppCompatActivity
         );
 
         Ui.findView(this, R.id.action_log_out).setOnClickListener(view -> {
-            sparkCloud.logOut();
-            log.i("logged out, username is: " + sparkCloud.getLoggedInUsername());
-            startActivity(new Intent(OnlineDeviceActivity.this, LoginActivity.class));
-            finish();
+            if (mListDevicesTask!=null) {
+                mListDevicesTask.cancel(true);
+            }
+            mMoveToActivity = (currentActivity) -> currentActivity.moveToLoginActivity();
         });
 
         Ui.findView(this, R.id.action_add_device).setOnClickListener(view -> {
-            moveToDeviceDiscovery();
+            if (mListDevicesTask!=null) {
+                mListDevicesTask.cancel(true);
+            }
+            mMoveToActivity = (currentActivity) -> currentActivity.moveToDeviceDiscovery();
         });
     }
 
-    private void moveToDeviceDiscovery() {
+    public void moveToLoginActivity() {
+        sparkCloud.logOut();
+        log.i("logged out, username is: " + sparkCloud.getLoggedInUsername());
+        startActivity(new Intent(OnlineDeviceActivity.this, LoginActivity.class));
+        finish();
+    }
+
+    public void moveToDeviceDiscovery() {
         if (PermissionsFragment.hasPermission(this, permission.ACCESS_COARSE_LOCATION)) {
             startActivity(new Intent(OnlineDeviceActivity.this, DiscoverDeviceActivity.class));
         } else {
@@ -113,6 +128,8 @@ public class OnlineDeviceActivity extends AppCompatActivity
     }
 
     protected void onStart() {
+        mMoveToActivity = null;
+
         super.onStart();
         startWorker();
     }
@@ -168,8 +185,13 @@ public class OnlineDeviceActivity extends AppCompatActivity
 
             @Override
             protected List<HolaDeviceData> doInBackground(Void... voids) {
+
                 try {
                     List<HolaDeviceData> result = new ArrayList<HolaDeviceData>();
+
+                    if (isCancelled()) {
+                        return null;
+                    }
 
                     // including this sleep because without it,
                     // we seem to attempt a socket connection too early,
@@ -177,9 +199,17 @@ public class OnlineDeviceActivity extends AppCompatActivity
                     log.d("Waiting a couple seconds before trying the socket connection...");
                     EZ.threadSleep(2000);
 
+                    if (isCancelled()) {
+                        return null;
+                    }
+
                     List<ParticleDevice> devices = ParticleCloudSDK.getCloud().getDevices();
 
                     for (ParticleDevice device : devices) {
+                        if (isCancelled()) {
+                            return null;
+                        }
+
                         HolaDeviceData deviceData = new HolaDeviceData(device, OnlineDeviceActivity.this);
                         deviceData.refresh(OnlineDeviceActivity.this);
                         result.add(deviceData);
@@ -193,19 +223,32 @@ public class OnlineDeviceActivity extends AppCompatActivity
                 }
             }
 
+            protected void onCancelled(List<HolaDeviceData> result) {
+                mListDevicesTask = null;
+
+                if (mMoveToActivity != null) {
+                    mMoveToActivity.doIt(OnlineDeviceActivity.this);
+                }
+            }
+
             @Override
             protected void onPostExecute(List<HolaDeviceData> result) {
                 mListDevicesTask = null;
 
-                if ((result == null) || (result.isEmpty())){
-                    showNotFoundView();
-                } else {
-                    mDeviceList = result;
-                    mAdapter.setDeviceData(result);
-                    showRecyclerView();
+                if (mMoveToActivity != null) {
+                    mMoveToActivity.doIt(OnlineDeviceActivity.this);
                 }
+                else {
+                    if ((result == null) || (result.isEmpty())) {
+                        showNotFoundView();
+                    } else {
+                        mDeviceList = result;
+                        mAdapter.setDeviceData(result);
+                        showRecyclerView();
+                    }
 
-                startWorker();
+                    startWorker();
+                }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

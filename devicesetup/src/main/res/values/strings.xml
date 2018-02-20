@@ -64,7 +64,7 @@
     <string name="you_did_it">YOU DID IT</string>
     <string name="rescan">Rescan</string>
     <string name="log_out">Log out</string>
-    <string name="add_device">Find new device</string>
+    <string name="add_device">Find device to set up</string>
     <string name="prompt_buddy_0">buddy 1 name</string>
     <string name="buddy_0_prefix">1: </string>
     <string name="prompt_buddy_1">buddy 2 name</string>
