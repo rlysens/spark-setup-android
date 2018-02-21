@@ -7,7 +7,7 @@
     <string name="app_name">@string/brand_name</string>
     <string name="device_name">Hola</string>
     <drawable name="device_image">@drawable/photon_vector</drawable>
-    <drawable name="device_image_small">@drawable/photon_vector_small</drawable>
+    <drawable name="device_image_small">@mipmap/hola_lm</drawable>
 
     <drawable name="brand_image_horizontal">@mipmap/hola_lm</drawable>
     <drawable name="brand_image_vertical">@drawable/particle_vertical_blue</drawable>

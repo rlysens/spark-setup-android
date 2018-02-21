@@ -219,11 +219,10 @@ public class GetReadyActivity extends BaseActivity implements PermissionsFragmen
     private void moveToOnlineDevices() {
         if (PermissionsFragment.hasPermission(this, permission.ACCESS_COARSE_LOCATION)) {
             startActivity(new Intent(GetReadyActivity.this, OnlineDeviceActivity.class));
+            finish();
         } else {
             PermissionsFragment.get(this).ensurePermission(permission.ACCESS_COARSE_LOCATION);
         }
-        
-        finish();
     }
 
     @Override

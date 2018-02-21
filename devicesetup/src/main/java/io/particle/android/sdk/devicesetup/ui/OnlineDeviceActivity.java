@@ -43,6 +43,7 @@ public class OnlineDeviceActivity extends AppCompatActivity
     private OnlineDeviceListAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private TextView mNoDevicesFoundTV;
+    private View mProgressBar;
     private AsyncTask<Void, Void, List<HolaDeviceData>> mListDevicesTask;
     private List<HolaDeviceData> mDeviceList;
     private MoveToActivity mMoveToActivity;
@@ -67,7 +68,8 @@ public class OnlineDeviceActivity extends AppCompatActivity
 
         mRecyclerView.setAdapter(mAdapter);
 
-        Ui.setText(this, R.id.tv_msg_no_dev_found, getString(R.string.msg_loading));
+        mProgressBar = findViewById(R.id.indeterminateBar);
+        mNoDevicesFoundTV.setVisibility(View.INVISIBLE);
 
         Ui.setText(this, R.id.online_list_header,
                 Phrase.from(this, R.string.online_list_header_text)
@@ -137,6 +139,7 @@ public class OnlineDeviceActivity extends AppCompatActivity
     private void showRecyclerView() {
          /* First, make sure the not found error is invisible */
         mNoDevicesFoundTV.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
          /* Then, make sure the recycler data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -149,6 +152,7 @@ public class OnlineDeviceActivity extends AppCompatActivity
         );
 
         mRecyclerView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
         mNoDevicesFoundTV.setVisibility(View.VISIBLE);
     }
 

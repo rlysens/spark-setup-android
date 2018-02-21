@@ -29,7 +29,8 @@ public class WaitForDisconnectionFromDeviceStep extends SetupStep {
 
     @Override
     protected void onRunStep() throws SetupStepException, SetupProcessException {
-        for (int i = 0; i <= 5; i++) {
+        for (int i = 0; i <= 200; i++) {
+            log.d("Soft AP disconnect attempt: " + i);
             if (isConnectedToSoftAp()) {
                 // wait and try again
                 EZ.threadSleep(200);

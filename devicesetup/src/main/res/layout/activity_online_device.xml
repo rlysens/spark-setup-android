@@ -27,22 +27,30 @@
             android:textColor="@android:color/white"
             android:textSize="30sp" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_online_list"
-            android:layout_width="match_parent"
-            android:layout_height="250dp" />
-
-        <TextView
-            android:id="@+id/tv_msg_no_dev_found"
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="4dp"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="@string/msg_no_devices_found"
-            android:textSize="14sp" />
-
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/indeterminateBar"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_msg_no_dev_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/msg_no_devices_found"
+                android:textSize="14sp" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_online_list"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+        </FrameLayout>
         <Button
             android:id="@+id/action_add_device"
             style="@style/SparkButton"

@@ -22,6 +22,7 @@
         <Button
             android:id="@+id/item_name"
             android:textColor="@color/normal_text_color"
+            android:padding="8dp"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"/>
@@ -35,9 +36,10 @@
         <TextView
             android:id="@+id/item_status"
             style="@style/TextAppearance.AppCompat.Title"
+            android:padding="8dp"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center"/>
 
         <Space
             android:layout_width="0dp"
