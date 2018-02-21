@@ -49,20 +49,38 @@
             android:id="@+id/device_name_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:text="@string/device_naming_label"
             android:visibility="gone"/>
 
-        <EditText
-            android:id="@+id/device_name"
-            style="@style/SparkEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="24dp"
-            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-"
-            android:hint="@string/device_naming_hint"
-            android:inputType="textNoSuggestions"
-            android:visibility="gone"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/indeterminateBar"
+                android:padding="8dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
+            <TextView
+                android:id="@+id/device_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginBottom="24dp"
+                android:padding="8dp"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:visibility="gone"/>
+        </FrameLayout>
         <TextView
             android:id="@+id/action_troubleshooting"
             style="@style/LinkText"

@@ -34,6 +34,7 @@
 
     <bool name="show_sign_up_page_fine_print">false</bool>
 
+    <color name="white">#ffffff</color>
     <color name="page_background_color">#484848</color>
     <color name="form_field_background_color">#ffffff</color>
     <color name="normal_text_color">#000000</color>

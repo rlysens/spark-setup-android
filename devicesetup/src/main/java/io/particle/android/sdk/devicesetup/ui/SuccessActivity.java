@@ -27,6 +27,7 @@ import io.particle.android.sdk.cloud.ParticleCloud;
 import io.particle.android.sdk.cloud.ParticleCloudException;
 import io.particle.android.sdk.cloud.ParticleDevice;
 import io.particle.android.sdk.cloud.SDKGlobals;
+import io.particle.android.sdk.devicesetup.HolaDeviceData;
 import io.particle.android.sdk.devicesetup.ParticleDeviceSetupLibrary;
 import io.particle.android.sdk.devicesetup.ParticleDeviceSetupLibrary.DeviceSetupCompleteContract;
 import io.particle.android.sdk.devicesetup.R;
@@ -91,8 +92,8 @@ public class SuccessActivity extends BaseActivity {
                 R.string.setup_failure_configure_summary,
                 R.string.setup_failure_lost_connection_to_device));
     }
-
-    @BindView(R2.id.device_name) protected EditText deviceNameView;
+    @BindView(R2.id.indeterminateBar) protected View progressBar;
+    @BindView(R2.id.device_name) protected TextView deviceNameView;
     @BindView(R2.id.device_name_label) protected TextView deviceNameLabelView;
     @Inject protected ParticleCloud particleCloud;
     boolean isSuccess = false;
@@ -125,6 +126,7 @@ public class SuccessActivity extends BaseActivity {
             ImageView image = Ui.findView(this, R.id.result_image);
             image.setImageResource(R.drawable.fail);
             deviceNameView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             Properties analyticProperties = new Properties();
 
             switch (resultCode) {
@@ -143,6 +145,7 @@ public class SuccessActivity extends BaseActivity {
             }
             SEGAnalytics.track("Device Setup: Failure", analyticProperties);
         } else {
+            showDeviceName(particleCloud);
             SEGAnalytics.track("Device Setup: Success", RESULT_SUCCESS_UNKNOWN_OWNERSHIP == resultCode ?
                     new Properties().putValue("reason", "not claimed") : null);
         }
@@ -154,26 +157,7 @@ public class SuccessActivity extends BaseActivity {
     }
 
     private void finishSetup(Context context, String deviceName, boolean isSuccess) {
-        ParticleUi.showParticleButtonProgress(SuccessActivity.this, R.id.action_done, true);
-        Async.executeAsync(particleCloud, new Async.ApiWork<ParticleCloud, Void>() {
-            @Override
-            public Void callApi(@NonNull ParticleCloud cloud) throws ParticleCloudException, IOException {
-                ParticleDevice device = particleCloud.getDevice(getIntent().getStringExtra(EXTRA_DEVICE_ID));
-                setDeviceName(device, deviceName);
-                return null;
-            }
-
-            @Override
-            public void onSuccess(@NonNull Void result) {
-                leaveActivity(context, isSuccess);
-            }
-
-            @Override
-            public void onFailure(@NonNull ParticleCloudException e) {
-                ParticleUi.showParticleButtonProgress(SuccessActivity.this, R.id.action_done, false);
-                deviceNameView.setError(getString(R.string.device_naming_failure));
-            }
-        });
+        leaveActivity(context, isSuccess);
     }
 
     private void leaveActivity(Context context, boolean isSuccess) {
@@ -201,25 +185,25 @@ public class SuccessActivity extends BaseActivity {
         finish();
     }
 
-    private void setDeviceName(ParticleDevice device, String deviceName) throws ParticleCloudException {
-        //Set new device name only if it changed
-        if (device.getName() != null && !device.getName().equals(deviceName)) {
-            device.setName(deviceName);
-        }
-    }
-
     private void showDeviceName(ParticleCloud cloud) {
-        Async.executeAsync(cloud, new Async.ApiWork<ParticleCloud, ParticleDevice>() {
+        deviceNameLabelView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        Async.executeAsync(cloud, new Async.ApiWork<ParticleCloud, String>() {
             @Override
-            public ParticleDevice callApi(@NonNull ParticleCloud cloud) throws ParticleCloudException, IOException {
-                return particleCloud.getDevice(getIntent().getStringExtra(EXTRA_DEVICE_ID));
+            public String callApi(@NonNull ParticleCloud cloud) throws ParticleCloudException, IOException {
+                ParticleDevice device = particleCloud.getDevice(getIntent().getStringExtra(EXTRA_DEVICE_ID));
+                HolaDeviceData deviceData = new HolaDeviceData(device, SuccessActivity.this);
+                deviceData.refresh(SuccessActivity.this);
+                return deviceData.getDeviceName();
             }
 
             @Override
-            public void onSuccess(@NonNull ParticleDevice particleDevice) {
+            public void onSuccess(@NonNull String deviceName) {
                 deviceNameLabelView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
                 deviceNameView.setVisibility(View.VISIBLE);
-                deviceNameView.setText(particleDevice.getName());
+                deviceNameView.setText(deviceName);
             }
 
             @Override
@@ -227,6 +211,7 @@ public class SuccessActivity extends BaseActivity {
                 //In case setup was successful, but we cannot retrieve device naming would be a minor issue
                 deviceNameView.setVisibility(View.GONE);
                 deviceNameLabelView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
