@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.squareup.phrase.Phrase;
 
+import java.util.List;
+
 import io.particle.android.sdk.devicesetup.HolaDeviceData;
 import io.particle.android.sdk.devicesetup.R;
 import io.particle.android.sdk.utils.EZ;
@@ -138,6 +140,14 @@ public class DeviceDetailActivity extends AppCompatActivity {
         startPollingWorker();
     }
 
+    protected void onStop() {
+        if (mPollingTask!=null) {
+            mPollingTask.cancel(true);
+        }
+
+        super.onStop();
+    }
+
     private void startPollingWorker() {
         // first, make sure we haven't actually been called twice...
         if (mPollingTask != null) {
@@ -149,11 +159,19 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
             @Override
             protected Boolean doInBackground(Void... voids) {
+                if (isCancelled()) {
+                    return false;
+                }
+
                 // including this sleep because without it,
                 // we seem to attempt a socket connection too early,
                 // and it makes the process time out(!)
                 log.d("Waiting a couple seconds before trying the socket connection...");
                 EZ.threadSleep(2000);
+
+                if (isCancelled()) {
+                    return null;
+                }
 
                 if (mDeviceData != null) {
                     mDeviceData.refresh(DeviceDetailActivity.this);
@@ -162,6 +180,10 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 else {
                     return false;
                 }
+            }
+
+            protected void onCancelled(Boolean result) {
+                mPollingTask = null;
             }
 
             @Override

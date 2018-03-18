@@ -136,6 +136,14 @@ public class OnlineDeviceActivity extends AppCompatActivity
         startWorker();
     }
 
+    protected void onStop() {
+        if (mListDevicesTask!=null) {
+            mListDevicesTask.cancel(true);
+        }
+
+        super.onStop();
+    }
+
     private void showRecyclerView() {
          /* First, make sure the not found error is invisible */
         mNoDevicesFoundTV.setVisibility(View.INVISIBLE);
