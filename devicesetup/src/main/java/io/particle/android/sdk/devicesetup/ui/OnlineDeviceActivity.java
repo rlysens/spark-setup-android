@@ -178,6 +178,7 @@ public class OnlineDeviceActivity extends AppCompatActivity
 
         if (mDeviceList != null) {
             HolaDeviceData deviceData = mDeviceList.get(clickedItemIndex);
+
             intent.putExtra("HOLA_DEVICE_DATA", deviceData);
         }
 
@@ -223,6 +224,7 @@ public class OnlineDeviceActivity extends AppCompatActivity
                         }
 
                         HolaDeviceData deviceData = new HolaDeviceData(device, OnlineDeviceActivity.this);
+                        deviceData.connectToDB(OnlineDeviceActivity.this);
                         deviceData.refresh(OnlineDeviceActivity.this);
                         result.add(deviceData);
                     }

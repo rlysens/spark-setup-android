@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -13,13 +14,10 @@ import android.widget.Toast;
 
 import com.squareup.phrase.Phrase;
 
-import java.util.List;
-
 import io.particle.android.sdk.devicesetup.HolaDeviceData;
 import io.particle.android.sdk.devicesetup.R;
 import io.particle.android.sdk.utils.EZ;
 import io.particle.android.sdk.utils.TLog;
-import io.particle.android.sdk.utils.ui.Toaster;
 import io.particle.android.sdk.utils.ui.Ui;
 
 public class DeviceDetailActivity extends AppCompatActivity {
@@ -71,6 +69,7 @@ public class DeviceDetailActivity extends AppCompatActivity {
         mBuddyEditText[2] = (EditText) findViewById(R.id.buddy_2_edit_txt);
 
         mDeviceData = getIntent().getParcelableExtra("HOLA_DEVICE_DATA");
+        mDeviceData.connectToDB(this);
 
         mDeviceDetailHeader.setText(getString(R.string.msg_loading));
 
@@ -228,9 +227,6 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
                 if (mDeviceData != null) {
                     params.mResult = mDeviceData.setBuddyName(params.mBuddyIdx, params.mBuddyName);
-                    if (params.mResult) {
-                        mDeviceData.refresh(DeviceDetailActivity.this);
-                    }
                 }
                 else {
                     params.mResult = false;
@@ -245,19 +241,18 @@ public class DeviceDetailActivity extends AppCompatActivity {
                 mProgressBar.setVisibility(View.INVISIBLE);
 
                 if (!params.mResult){
-                    Toaster.s(DeviceDetailActivity.this, getString(R.string.buddy_set_fail));
+                    String text = getString(R.string.buddy_not_found);
+                    SpannableStringBuilder biggerText = new SpannableStringBuilder(text);
+                    biggerText.setSpan(new RelativeSizeSpan(1.50f), 0, text.length(), 0);
+                    Toast.makeText(DeviceDetailActivity.this,
+                            biggerText, Toast.LENGTH_LONG).show();
                 }
                 else {
-                    if (mDeviceData.getBuddyId(params.mBuddyIdx).equals("")) {
-                        String text = getString(R.string.buddy_not_found);
-                        SpannableStringBuilder biggerText = new SpannableStringBuilder(text);
-                        biggerText.setSpan(new RelativeSizeSpan(1.50f), 0, text.length(), 0);
-                        Toast.makeText(DeviceDetailActivity.this,
-                                biggerText, Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        Toaster.s(DeviceDetailActivity.this, getString(R.string.buddy_set_success));
-                    }
+                    String text = getString(R.string.buddy_set_success);
+                    SpannableStringBuilder biggerText = new SpannableStringBuilder(text);
+                    biggerText.setSpan(new RelativeSizeSpan(1.50f), 0, text.length(), 0);
+                    Toast.makeText(DeviceDetailActivity.this,
+                            biggerText, Toast.LENGTH_LONG).show();
                 }
             }
         }.execute(myTaskParams);
