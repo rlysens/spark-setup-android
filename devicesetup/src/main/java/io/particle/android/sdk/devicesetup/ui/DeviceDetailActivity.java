@@ -1,5 +1,6 @@
 package io.particle.android.sdk.devicesetup.ui;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.client.AWSStartupHandler;
+import com.amazonaws.mobile.client.AWSStartupResult;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.squareup.phrase.Phrase;
 
 import io.particle.android.sdk.devicesetup.HolaDeviceData;
@@ -42,6 +48,22 @@ public class DeviceDetailActivity extends AppCompatActivity {
     private AsyncTask<Void, Void, Boolean> mPollingTask;
     private AsyncTask<SubmitWorkerParams, Void, SubmitWorkerParams> mSubmitTask;
 
+    private AWSCredentialsProvider mCredentialsProvider;
+
+    private void connectToDB(Context context) {
+        AWSMobileClient.getInstance().initialize(context, new AWSStartupHandler() {
+            @Override
+            public void onComplete(AWSStartupResult awsStartupResult) {
+                mCredentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+                // Instantiate a AmazonDynamoDBMapperClient
+                AmazonDynamoDBClient dbClient = new AmazonDynamoDBClient(mCredentialsProvider);
+                dbClient.setEndpoint(context.getString(R.string.dynamodb_endpoint));
+
+                mDeviceData.setDBClient(dbClient);
+            }
+        }).execute();
+    }
+
     private String getBatteryChargeString() {
         String batteryChargeString = String.format("Battery Charge:%d%%", mDeviceData.getBatteryCharge());
         return batteryChargeString;
@@ -68,13 +90,14 @@ public class DeviceDetailActivity extends AppCompatActivity {
         mBuddyEditText[1] = (EditText) findViewById(R.id.buddy_1_edit_txt);
         mBuddyEditText[2] = (EditText) findViewById(R.id.buddy_2_edit_txt);
 
-        mDeviceData = getIntent().getParcelableExtra("HOLA_DEVICE_DATA");
-        mDeviceData.connectToDB(this);
-
         mDeviceDetailHeader.setText(getString(R.string.msg_loading));
 
         mDeviceDetailOnlineView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
+
+        mDeviceData = getIntent().getParcelableExtra("HOLA_DEVICE_DATA");
+
+        connectToDB(this);
 
         mBatteryChargeTextView.setText(getBatteryChargeString());
         mBatteryChargeProgressBar.setProgress(mDeviceData.getBatteryCharge());
@@ -133,9 +156,13 @@ public class DeviceDetailActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        mBuddyEditText[0].setText(mDeviceData.getBuddyName(0));
-        mBuddyEditText[1].setText(mDeviceData.getBuddyName(1));
-        mBuddyEditText[2].setText(mDeviceData.getBuddyName(2));
+
+        for (int buddyIndex=0; buddyIndex < mDeviceData.NUM_BUDDIES; buddyIndex++) {
+            if (!mDeviceData.getBuddyName(buddyIndex).isEmpty()) {
+                mBuddyEditText[0].setText(mDeviceData.getBuddyName(buddyIndex));
+            }
+        }
+
         startPollingWorker();
     }
 

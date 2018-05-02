@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="dynamodb_endpoint">dynamodb.us-west-2.amazonaws.com</string>
     <string name="mode_button_name">Mode button</string>
     <string name="listen_mode_led_color_name">blue</string>
     <string name="brand_name">¡Hola!</string>

@@ -45,7 +45,6 @@ public class HolaDeviceData implements Parcelable {
      */
     private final String INTERCOM_TABLE = "Intercom_Table";
 
-    private AWSCredentialsProvider mCredentialsProvider;
     private AmazonDynamoDBClient mDbClient;
 
     private ParticleDevice mDevice;
@@ -174,7 +173,6 @@ public class HolaDeviceData implements Parcelable {
 
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private HolaDeviceData(Parcel in) {
-        mCredentialsProvider = null;
         mDbClient = null;
 
         mDevice = in.readParcelable(ParticleDevice.class.getClassLoader());
@@ -190,10 +188,11 @@ public class HolaDeviceData implements Parcelable {
     private String lookupNameInDB(int intercomId) {
         // Need to specify the key of our item, which is a Map of our primary key attribute(s)
         Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
-        key.put("intercom_id", new AttributeValue(Integer.toString(intercomId)));
+        AttributeValue attributeValue = new AttributeValue();
+        key.put("intercom_id", attributeValue.withN(Integer.toString(intercomId)));
 
-        GetItemRequest getItemRequest = new GetItemRequest(INTERCOM_TABLE,key);
-        AttributeValue attributeValue = mDbClient.getItem(getItemRequest).getItem().get("intercom_name");
+        GetItemRequest getItemRequest = new GetItemRequest(INTERCOM_TABLE, key);
+        attributeValue = mDbClient.getItem(getItemRequest).getItem().get("intercom_name");
 
         if (attributeValue != null) {
             return attributeValue.getS();
@@ -203,22 +202,13 @@ public class HolaDeviceData implements Parcelable {
         }
     }
 
-    public void connectToDB(Context context) {
-        AWSMobileClient.getInstance().initialize(context, new AWSStartupHandler() {
-            @Override
-            public void onComplete(AWSStartupResult awsStartupResult) {
-                mCredentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
-                // Instantiate a AmazonDynamoDBMapperClient
-                mDbClient = new AmazonDynamoDBClient(mCredentialsProvider);
-            }
-        }).execute();
+    public void setDBClient(AmazonDynamoDBClient dbClient) {
+        mDbClient = dbClient;
     }
 
     public HolaDeviceData(ParticleDevice device, Context context) {
 
-        mCredentialsProvider = null;
         mDbClient = null;
-
         mDevice = device;
         mIsOnline = false;
 
@@ -245,41 +235,43 @@ public class HolaDeviceData implements Parcelable {
                     SharedPreferences prefs = context.getSharedPreferences(id, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putInt("my_id", my_id);
+
+                    mMy_id = my_id;
+
+                    String deviceName = lookupNameInDB(my_id);
+                    if (deviceName != null) {
+                        /*Update name in persistent storage if found/changed*/
+                        if (!mDeviceName.equals(deviceName)) {
+                            editor.putString("my_name", deviceName);
+                        }
+
+                        mDeviceName = deviceName;
+                    }
+
                     editor.commit();
                 }
 
-                mMy_id = my_id;
+                for (int buddyIdx = 0; buddyIdx < mBuddyNames.length; buddyIdx++) {
+                    if (mBuddyIds[buddyIdx] == -1) {
+                        String functionName = String.format("buddy_%d_id", buddyIdx);
+                        int buddyId = mDevice.getIntVariable(functionName);
+                        mBuddyIds[buddyIdx] = buddyId;
 
-                String deviceName = lookupNameInDB(my_id);
-                if (deviceName != null) {
-                    /*Update name in persistent storage if found/changed*/
-                    if (!mDeviceName.equals(deviceName)) {
-                        String id = mDevice.getID();
-                        SharedPreferences prefs = context.getSharedPreferences(id, Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putString("my_name", deviceName);
-                        editor.commit();
+                        if (buddyId != -1) {
+                            String buddyName = lookupNameInDB(buddyId);
+
+                            if (buddyName != null) {
+                                mBuddyNames[buddyIdx] = buddyName;
+                            }
+                        }
                     }
-
-                    mDeviceName = deviceName;
                 }
 
                 mBatteryCharge = Integer.parseInt(mDevice.getStringVariable("battery_pct"));
                 mWifiSignal = Integer.parseInt(mDevice.getStringVariable("wifi_pct"));
 
-                for (int buddyIdx = 0; buddyIdx < mBuddyNames.length; buddyIdx++) {
-                    String functionName = String.format("buddy_%d_id", buddyIdx);
-                    int buddyId = mDevice.getIntVariable(functionName);
-                    mBuddyIds[buddyIdx] = buddyId;
-
-                    if (buddyId != -1) {
-                        String buddyName = lookupNameInDB(buddyId);
-
-                        if (buddyName != null) {
-                            mBuddyNames[buddyIdx] = buddyName;
-                        }
-                    }
-                }
+                mBatteryCharge = Integer.parseInt(mDevice.getStringVariable("battery_pct"));
+                mWifiSignal = Integer.parseInt(mDevice.getStringVariable("wifi_pct"));
             }
         }
         catch (Exception e) {
